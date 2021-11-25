@@ -7,8 +7,8 @@ class TrainOptions(BaseOptions):
         # training epoch
 
         parser.add_argument('--continue_train', action='store_true', help='continue training: load the latest model')
-        parser.add_argument('--epoch_count', type=int, default=1,
-                            help='the starting epoch count, we save the model by <epoch_count>, <epoch_count>+<save_latest_freq>, ...')
+        parser.add_argument('--epoch_count', type=int, default=1, help='the starting epoch count, '
+                                                                       'we save the model by <epoch_count>, <epoch_count>+<save_latest_freq>, ...')
         parser.add_argument('--phase', type=str, default='train', help='train, val, test, etc')
         parser.add_argument('--which_epoch', type=str, default='latest',
                             help='which epoch to load? set to latest to use latest cached model')
@@ -28,7 +28,7 @@ class TrainOptions(BaseOptions):
         # learning rate and loss weight
         parser.add_argument('--beta1', type=float, default=0.5, help='momentum term of adam')
         parser.add_argument('--lr', type=float, default=0.0001, help='initial learning rate for adam')
-        parser.add_argument('--lr_policy', type=str, default='lambda', help='learning rate policy[lambda|step|plateau]')
+        parser.add_argument('--lr_policy', type=str, default='lambda', help='学习率策略[lambda|step|plateau]')
         parser.add_argument('--lr_task', type=float, default=1e-4, help='initial learning rate for adam')
         parser.add_argument('--lr_trans', type=float, default=5e-5, help='initial learning rate for discriminator')
         parser.add_argument('--no_lsgan', action='store_true',

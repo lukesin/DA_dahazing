@@ -1,13 +1,12 @@
 import os.path
 import random
-
-import numpy as np
-import torch
 import torchvision.transforms as transforms
-from PIL import Image
-
+import torch
 from data.base_dataset import BaseDataset
 from data.image_folder import make_dataset
+from PIL import Image
+import numpy as np
+import util.util as util
 
 
 class AlignedDataset(BaseDataset):
@@ -34,10 +33,12 @@ class AlignedDataset(BaseDataset):
         self.transformPIL = transforms.ToPILImage()
         transform_list1 = [transforms.ToTensor()]
         transform_list2 = [transforms.Normalize((0.5, 0.5, 0.5),
-                                                (0.5, 0.5, 0.5))]  # Todo
+                                                (0.5, 0.5, 0.5))]
+        transform_list3 = [transforms.Normalize((0.5,), (0.5,))]
 
         self.transform1 = transforms.Compose(transform_list1)
         self.transform2 = transforms.Compose(transform_list2)
+        self.transform3 = transforms.Compose(transform_list3)
 
     def __getitem__(self, index):
         # A, B is the image pair, hazy, gt respectively
@@ -51,8 +52,8 @@ class AlignedDataset(BaseDataset):
             # C_path = self.C_paths[random.randint(0, len(self.AB_paths)-2200)]
             AB = Image.open(AB_path).convert('RGB')
             C = Image.open(C_path).convert('RGB')
-            D = Image.open(D_path).convert('RGB')  # Todo
-            E = Image.open(E_path).convert('RGB')  # Todo
+            D = Image.open(D_path)
+            E = Image.open(E_path)
 
             ori_w = AB.width
             ori_h = AB.height
@@ -108,8 +109,8 @@ class AlignedDataset(BaseDataset):
             A = self.transform2(A)
             B = self.transform2(B)
             C = self.transform2(C)
-            D = self.transform2(D)
-            E = self.transform2(E)
+            D = self.transform3(D)
+            E = self.transform3(E)
 
             if random.random() < 0.5:
                 noise = torch.randn(3, self.opt.fineSize, self.opt.fineSize) / 100

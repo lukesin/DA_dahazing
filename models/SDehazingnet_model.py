@@ -1,14 +1,15 @@
-import itertools
-
 import torch
-
-import util.task as task
-from ECLoss.ECLoss import DCLoss
-from TVLoss.L1_TVLoss import L1_TVLoss_Charbonnier
-from util.image_pool import ImagePool
-from . import losses
-from . import networks
+import itertools
 from .base_model import BaseModel
+from . import networks
+from util.image_pool import ImagePool
+import torch.nn.functional as F
+import util.task as task
+from ECLoss.ECLoss import BCLoss, DCLoss
+from TVLoss.TVLossL1 import TVLossL1
+from TVLoss.L1_TVLoss import L1_TVLoss_Charbonnier
+from . import losses
+import time
 
 
 class SDehazingnetModel(BaseModel):

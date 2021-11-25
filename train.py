@@ -1,9 +1,9 @@
 import time
-
+from options.train_options import TrainOptions
 from data.data_loader import CreateDataLoader
 from models import create_model
-from options.train_options import TrainOptions
 from util.visualizer import Visualizer
+from util.metrics import PSNR, SSIM
 
 
 def train(opt, data_loader, model, visualizer):
@@ -79,7 +79,7 @@ def train(opt, data_loader, model, visualizer):
             model.update_learning_rate()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     opt = TrainOptions().parse()
     data_loader = CreateDataLoader(opt)
     model = create_model(opt)

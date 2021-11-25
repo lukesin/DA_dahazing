@@ -1,10 +1,8 @@
 import argparse
 import os
-
-import torch
-
-import models
 from util import util
+import torch
+import models
 
 
 class BaseOptions():
@@ -48,15 +46,13 @@ class BaseOptions():
         parser.add_argument('--gan_type', type=str, default='wgan-gp',
                             help='wgan-gp : Wasserstein GAN with Gradient Penalty, lsgan : Least Sqaures GAN, gan : Vanilla GAN')
         parser.add_argument('--n_layers_D', type=int, default=3, help='only used if which_model_netD==n_layers')
-        parser.add_argument('--gpu_ids', type=str, default='0',
-                            help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
+        parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         parser.add_argument('--name', type=str, default='experiment_name',
                             help='name of the experiment. It decides where to store samples and models')
         parser.add_argument('--dataset_mode', type=str, default='aligned',
                             help='chooses how datasets are loaded. [unaligned | aligned | single]')
         parser.add_argument('--model', type=str, default='CycleGanmodel',
-                            help='chooses which model to use. DA_model, S_dehazing_model, R_dehazing_model,'
-                                 ' CycleGAN_model Seminetmodel, test')
+                            help='chooses which model to use. DA_model, S_dehazing_model, R_dehazing_model, CycleGAN_model Seminetmodel, test')
         parser.add_argument('--which_direction', type=str, default='AtoB', help='AtoB or BtoA')
         parser.add_argument('--nThreads', default=2, type=int, help='# threads for loading data')
         parser.add_argument('--checkpoints_dir', type=str, default='./checkpoints', help='models are saved here')

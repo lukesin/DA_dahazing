@@ -1,13 +1,10 @@
 # two cyclegan :syn2real, real2syn
-import itertools
-
 import torch
-
+import itertools
 from util.image_pool import ImagePool
-from . import losses
-from . import networks
 from .base_model import BaseModel
-
+from . import networks
+from . import losses
 
 class CycleGanmodel(BaseModel):
     def name(self):
@@ -21,8 +18,7 @@ class CycleGanmodel(BaseModel):
             parser.add_argument('--lambda_A', type=float, default=1.0, help='weight for cycle loss (A -> B -> A)')
             parser.add_argument('--lambda_B', type=float, default=1.0,
                                 help='weight for cycle loss (B -> A -> B)')
-            parser.add_argument('--lambda_identity', type=float, default=0.1,
-                                help='use identity mapping. Setting lambda_identity other than 0 has an effect of scaling the weight of the identity mapping loss. For example, if the weight of the identity loss should be 10 times smaller than the weight of the reconstruction loss, please set lambda_identity = 0.1')
+            parser.add_argument('--lambda_identity', type=float, default=0.1, help='use identity mapping. Setting lambda_identity other than 0 has an effect of scaling the weight of the identity mapping loss. For example, if the weight of the identity loss should be 10 times smaller than the weight of the reconstruction loss, please set lambda_identity = 0.1')
             parser.add_argument('--which_model_netG_A', type=str, default='resnet_9blocks_depth',
                                 help='selects model to use for netG_A')
             parser.add_argument('--which_model_netG_B', type=str, default='resnet_9blocks',
@@ -42,8 +38,7 @@ class CycleGanmodel(BaseModel):
             visual_names_B.append('idt_B')
 
         self.visual_names = visual_names_A + visual_names_B
-        # specify the models you want to save to the disk.
-        # The program will call base_model.save_networks and base_model.load_networks
+        # specify the models you want to save to the disk. The program will call base_model.save_networks and base_model.load_networks
         if self.isTrain:
             self.model_names = ['G_A', 'G_B', 'D_A', 'D_B']
         else:  # during test time, only load Gs
@@ -54,20 +49,18 @@ class CycleGanmodel(BaseModel):
         # Code (paper): G_A (G), G_B (F), D_A (D_Y), D_B (D_X)
         use_parallel = False
         self.netG_A = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf,
-                                        opt.which_model_netG_A, opt.norm, not opt.no_dropout, self.gpu_ids,
-                                        use_parallel, opt.learn_residual)
+                                      opt.which_model_netG_A, opt.norm, not opt.no_dropout, self.gpu_ids, use_parallel, opt.learn_residual)
         self.netG_B = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf,
-                                        opt.which_model_netG_B, opt.norm, not opt.no_dropout, self.gpu_ids,
-                                        use_parallel, opt.learn_residual)
+                                      opt.which_model_netG_B, opt.norm, not opt.no_dropout, self.gpu_ids, use_parallel, opt.learn_residual)
 
         if self.isTrain:
             use_sigmoid = False
             self.netD_A = networks.define_D(opt.output_nc, opt.ndf,
-                                            opt.which_model_netD,
-                                            opt.n_layers_D, opt.norm, use_sigmoid, self.gpu_ids, use_parallel)
+                                          opt.which_model_netD,
+                                          opt.n_layers_D, opt.norm, use_sigmoid, self.gpu_ids, use_parallel)
             self.netD_B = networks.define_D(opt.output_nc, opt.ndf,
-                                            opt.which_model_netD,
-                                            opt.n_layers_D, opt.norm, use_sigmoid, self.gpu_ids, use_parallel)
+                                          opt.which_model_netD,
+                                          opt.n_layers_D, opt.norm, use_sigmoid, self.gpu_ids, use_parallel)
 
         if self.isTrain:
             self.fake_A_pool = ImagePool(opt.pool_size)
@@ -89,7 +82,7 @@ class CycleGanmodel(BaseModel):
     def set_input(self, input):
         AtoB = self.opt.which_direction == 'AtoB'
         self.real_A = input['A' if AtoB else 'C'].to(self.device)
-        self.depth = input['D'].to(self.device)
+        self.depth =  input['D'].to(self.device)
         self.real_B = input['C' if AtoB else 'A'].to(self.device)
         self.real_B_depth = input['E'].to(self.device)
         self.image_paths = input['A_paths' if AtoB else 'C_paths']

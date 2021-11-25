@@ -11,7 +11,7 @@ class TestModel(BaseModel):
         return 'TestModel'
 
     def initialize(self, opt):
-        assert(not opt.isTrain)
+        assert (not opt.isTrain)
         BaseModel.initialize(self, opt)
         self.input_A = self.Tensor(opt.batchSize, opt.input_nc, opt.fineSize, opt.fineSize)
         self.input_B = self.Tensor(opt.batchSize, opt.input_nc, opt.fineSize, opt.fineSize)
@@ -39,9 +39,9 @@ class TestModel(BaseModel):
         self.image_paths = input['A_paths']
 
     def test(self):
-        self.real_A = Variable(self.input_A, volatile = True)
+        self.real_A = Variable(self.input_A, volatile=True)
         self.fake_B = self.netG.forward(self.real_A)
-        self.real_B = Variable(self.input_B, volatile = True)
+        self.real_B = Variable(self.input_B, volatile=True)
         print(self.real_A.shape)
 
     # get image paths
@@ -53,9 +53,7 @@ class TestModel(BaseModel):
         fake_B = util.tensor2im(self.fake_B.data)
         real_B = util.tensor2im(self.real_B.data)
 
-        return OrderedDict([('real_A', real_A), ('fake_B', fake_B),('real_B', real_B)])
-
- 
+        return OrderedDict([('real_A', real_A), ('fake_B', fake_B), ('real_B', real_B)])
 
 
 class TestModel_DA(BaseModel):
@@ -63,7 +61,7 @@ class TestModel_DA(BaseModel):
         return 'TestModel'
 
     def initialize(self, opt):
-        assert(not opt.isTrain)
+        assert (not opt.isTrain)
         BaseModel.initialize(self, opt)
         self.input_A = self.Tensor(opt.batchSize, opt.input_nc, opt.fineSize, opt.fineSize)
         self.input_B = self.Tensor(opt.batchSize, opt.input_nc, opt.fineSize, opt.fineSize)
@@ -91,9 +89,9 @@ class TestModel_DA(BaseModel):
         self.image_paths = input['A_paths']
 
     def test(self):
-        self.real_A = Variable(self.input_A, volatile = True)
+        self.real_A = Variable(self.input_A, volatile=True)
         self.fake_B = self.netG.forward(self.real_A)
-        self.real_B = Variable(self.input_B, volatile = True)
+        self.real_B = Variable(self.input_B, volatile=True)
         print(self.real_A.shape)
 
     # get image paths
@@ -105,4 +103,4 @@ class TestModel_DA(BaseModel):
         fake_B = util.tensor2im(self.fake_B.data)
         real_B = util.tensor2im(self.real_B.data)
 
-        return OrderedDict([('real_A', real_A), ('fake_B', fake_B),('real_B', real_B)])
+        return OrderedDict([('real_A', real_A), ('fake_B', fake_B), ('real_B', real_B)])

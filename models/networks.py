@@ -1,11 +1,9 @@
-import functools
-
-import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torch.autograd import Variable
 from torch.nn import init
+import functools
+from torch.autograd import Variable
+import numpy as np
 from torch.optim import lr_scheduler
 
 
@@ -93,7 +91,7 @@ def init_weights(net, init_type='normal', gain=0.02):
             if hasattr(m, 'bias') and m.bias is not None:
                 init.constant_(m.bias.data, 0.0)
         elif classname.find('BatchNorm2d') != -1:
-            init.uniform_(m.weight.data, gain, 1.0)  # todo: 倒置参数
+            init.uniform_(m.weight.data, 1.0, gain)
             init.constant_(m.bias.data, 0.0)
 
     print('initialize network with %s' % init_type)
@@ -157,6 +155,7 @@ class _InceptionBlock(nn.Module):
             layer = nn.Sequential(
                 nn.ReflectionPad2d(i * 2 + 1),
                 nn.Conv2d(input_nc, output_nc, kernel_size=3, padding=0, dilation=i * 2 + 1, bias=use_bias)
+                # Todo:dilation => 扩张比例？
             )
             setattr(self, 'layer' + str(i), layer)
 
@@ -302,7 +301,7 @@ def define_G(input_nc, output_nc, ngf, which_model_netG, norm='batch', use_dropo
     else:
         raise NotImplementedError('Generator model name [%s] is not recognized' % which_model_netG)
     if len(gpu_ids) > 0:
-        netG.cuda(gpu_ids[0])
+        netG.cuda(gpu_ids[0])  # Todo: 这个参数可能会对多卡计算造成影响，如果有情况记得看一下
     netG.apply(weights_init)
     return netG
 
@@ -422,22 +421,11 @@ class ResnetGenerator(nn.Module):
 
 
 class SFT_layer(nn.Module):
-    """
-    SFT_Layer
-    """
-
     def __init__(self):
         super(SFT_layer, self).__init__()
         Relu = nn.LeakyReLU(0.2, True)
 
-        condition_conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1,
-                                    padding=1)
-        # Todo:2021年11月21日22:26:27报
-        #  RuntimeError: Given groups=1, weight of size [16, 1, 3, 3],
-        #  expected input[2, 3, 256, 256] to have 1 channels, but got 3 channels instead.
-        #  推测是这边网络结构的原因，还在排查
-
-        # condition_conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
+        condition_conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
         condition_conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
         condition_conv3 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
 
@@ -455,12 +443,6 @@ class SFT_layer(nn.Module):
         self.sift_conv = nn.Sequential(*sift_conv)
 
     def forward(self, x, depth):
-        """
-
-        :param x:缩放维度？
-        :param depth:网络深度？
-        :return:
-        """
         depth_condition = self.condition_conv(depth)
         scaled_feature = self.scale_conv(depth_condition) * x
         sifted_feature = scaled_feature + self.sift_conv(depth_condition)

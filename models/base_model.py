@@ -1,13 +1,11 @@
 import os
-from collections import OrderedDict
-
 import torch
-
+from collections import OrderedDict
 from util import util
 from . import networks
 
 
-class BaseModel():
+class BaseModel:
 
     # modify parser to add command line options,
     # and also change the default values if needed
